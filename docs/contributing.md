@@ -6,6 +6,11 @@
 git clone https://github.com/Matnazar-Matnazarov/django-click-uz.git
 cd django-click-uz
 uv sync --all-extras
+```
+
+`uv.lock` is not committed; CI and local installs resolve dependencies from `pyproject.toml`.
+
+```bash
 uv run ruff check .
 uv run ruff format --check .
 uv run pytest
