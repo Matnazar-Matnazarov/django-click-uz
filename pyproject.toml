@@ -1,0 +1,86 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "django-click-uz"
+version = "0.1.0"
+description = "Production-oriented Django integration for the Click.uz payment gateway"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "click-uz-sdk contributors" }]
+keywords = ["django", "click", "click.uz", "payment", "uzbekistan"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Framework :: Django",
+    "Framework :: Django :: 5.0",
+    "Framework :: Django :: 5.1",
+    "Framework :: Django :: 5.2",
+    "Framework :: Django :: 6.0",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Typing :: Typed",
+]
+dependencies = [
+    "django>=5.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-django>=4.8",
+    "ruff>=0.9",
+    "build>=1.2",
+    "twine>=6.0",
+    "mkdocs-material>=9.5",
+]
+
+[project.urls]
+Documentation = "https://django-click-uz.readthedocs.io/"
+Changelog = "https://github.com/Matnazar-Matnazarov/click-uz-sdk/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/Matnazar-Matnazarov/click-uz-sdk"
+Issues = "https://github.com/Matnazar-Matnazarov/click-uz-sdk/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+click_uz = ["py.typed", "locale/*/LC_MESSAGES/*"]
+click_up = ["py.typed"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "."]
+DJANGO_SETTINGS_MODULE = "tests.settings"
+django_debug_mode = "keep"
+
+[tool.ruff]
+target-version = "py312"
+src = ["src", "tests"]
+line-length = 100
+extend-exclude = ["site", "dist", ".venv"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # Pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+]
+ignore = [
+    "E501", # line length (URLs, migrations, signatures)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"src/**/migrations/*.py" = ["I"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["click_uz", "click_up", "tests"]
+
+[tool.ruff.format]
+quote-style = "double"

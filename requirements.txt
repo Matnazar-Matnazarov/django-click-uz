@@ -1,0 +1,2 @@
+# Editable dev install; runtime deps live in pyproject.toml.
+-e .[dev]
