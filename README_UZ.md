@@ -265,4 +265,5 @@ Buning uchun `settings`da `MERCHANT_TRANS_FIELD = "transaction_param"` (yoki `CL
 ---
 
 Inglizcha qisqa README: [README.md](README.md)  
+GitHub manbasi: [https://github.com/Matnazar-Matnazarov/django-click-uz](https://github.com/Matnazar-Matnazarov/django-click-uz)  
 Click hujjatlari: [https://docs.click.uz/en/](https://docs.click.uz/en/)
