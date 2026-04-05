@@ -6,7 +6,7 @@
 [![Documentation](https://readthedocs.org/projects/django-click-uz/badge/?version=latest)](https://django-click-uz.readthedocs.io/en/latest/)
 
 Django **5+** + [Click.uz](https://docs.click.uz/en/): pay links, webhooks, optional audit, replay protection, production-oriented guards.  
-**Docs:** [django-click-uz.readthedocs.io](https://django-click-uz.readthedocs.io/en/latest/) · **Uzbek:** [README_UZ.md](README_UZ.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+**Docs:** [django-click-uz.readthedocs.io](https://django-click-uz.readthedocs.io/en/latest/) · **Uzbek:** [README_UZ.md](README_UZ.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md) · **Source:** [github.com/Matnazar-Matnazarov/django-click-uz](https://github.com/Matnazar-Matnazarov/django-click-uz)
 
 ## Install
 
