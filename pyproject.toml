@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "django-click-uz"
-version = "0.1.0"
+version = "0.1.1"
 description = "Production-oriented Django integration for the Click.uz payment gateway"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -40,7 +40,7 @@ dev = [
 ]
 
 [project.urls]
-Documentation = "https://django-click-uz.readthedocs.io/"
+Documentation = "https://github.com/Matnazar-Matnazarov/django-click-uz/tree/main/docs"
 Changelog = "https://github.com/Matnazar-Matnazarov/django-click-uz/blob/main/CHANGELOG.md"
 Homepage = "https://github.com/Matnazar-Matnazarov/django-click-uz"
 Repository = "https://github.com/Matnazar-Matnazarov/django-click-uz.git"

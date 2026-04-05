@@ -266,4 +266,5 @@ Buning uchun `settings`da `MERCHANT_TRANS_FIELD = "transaction_param"` (yoki `CL
 
 Inglizcha qisqa README: [README.md](README.md)  
 GitHub manbasi: [https://github.com/Matnazar-Matnazarov/django-click-uz](https://github.com/Matnazar-Matnazarov/django-click-uz)  
+Qo‘shimcha Markdown hujjatlar: repodagi [`docs/`](https://github.com/Matnazar-Matnazarov/django-click-uz/tree/main/docs) — brauzerda ochilgan sayt yo‘q; lokal ko‘rish: `uv sync --all-extras` keyin `mkdocs serve`.  
 Click hujjatlari: [https://docs.click.uz/en/](https://docs.click.uz/en/)

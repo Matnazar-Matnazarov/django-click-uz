@@ -1,6 +1,7 @@
 site_name: django-click-uz
 site_description: Django integration for the Click.uz payment gateway
-site_url: https://django-click-uz.readthedocs.io/
+# No public doc host; build locally with `mkdocs serve`. Canonical project page:
+site_url: https://github.com/Matnazar-Matnazarov/django-click-uz
 repo_url: https://github.com/Matnazar-Matnazarov/django-click-uz
 repo_name: Matnazar-Matnazarov/django-click-uz
 edit_uri: edit/main/docs/

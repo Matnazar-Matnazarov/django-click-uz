@@ -2,11 +2,38 @@
 
 [![CI](https://github.com/Matnazar-Matnazarov/django-click-uz/actions/workflows/ci.yml/badge.svg)](https://github.com/Matnazar-Matnazarov/django-click-uz/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/django-click-uz.svg)](https://pypi.org/project/django-click-uz/)
-[![Python versions](https://img.shields.io/pypi/pyversions/django-click-uz.svg)](https://pypi.org/project/django-click-uz/)
-[![Documentation](https://readthedocs.org/projects/django-click-uz/badge/?version=latest)](https://django-click-uz.readthedocs.io/en/latest/)
+[![Python](https://img.shields.io/pypi/pyversions/django-click-uz.svg)](https://pypi.org/project/django-click-uz/)
+[![Django](https://img.shields.io/badge/Django-5%2B-092e20?logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![Click.uz](https://img.shields.io/badge/Payment-Click.uz-00a651)](https://docs.click.uz/en/)
 
-Django **5+** + [Click.uz](https://docs.click.uz/en/): pay links, webhooks, optional audit, replay protection, production-oriented guards.  
-**Docs:** [django-click-uz.readthedocs.io](https://django-click-uz.readthedocs.io/en/latest/) · **Uzbek:** [README_UZ.md](README_UZ.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md) · **Source:** [github.com/Matnazar-Matnazarov/django-click-uz](https://github.com/Matnazar-Matnazarov/django-click-uz)
+**Production-oriented Django 5+** integration for the [Click.uz](https://docs.click.uz/en/) Shop API: payment URLs, prepare/complete webhooks, MD5 signatures, optional audit log, replay protection, HTTPS / IP checks for callbacks.
+
+| | |
+|--|--|
+| **Uzbek (full tutorial)** | [README_UZ.md](README_UZ.md) |
+| **Changelog** | [CHANGELOG.md](CHANGELOG.md) |
+| **Repository** | [github.com/Matnazar-Matnazarov/django-click-uz](https://github.com/Matnazar-Matnazarov/django-click-uz) |
+| **Extra Markdown docs** | [`docs/`](https://github.com/Matnazar-Matnazarov/django-click-uz/tree/main/docs) (MkDocs sources) |
+
+---
+
+## What’s in the package
+
+| Part | Role |
+|------|------|
+| **`click_uz`** | Django app: `INSTALLED_APPS`, migrations, `urls`, views (`prepare` / `complete` / `callback` / `webhook`), `webhook_guard`, `ModelOrderHandler`, signals, Uzbek `locale/uz`. |
+| **`click_up`** | Same codebase, **import-only** compatibility (`ClickUp`, `ClickWebhook`, `generate_pay_link` style). **Not** an `INSTALLED_APPS` entry. |
+| **Config** | `CLICK` dict or flat `CLICK_*` settings; optional `WEBHOOK_ALLOWED_CIDRS`, `WEBHOOK_REQUIRE_HTTPS`, etc. |
+| **Tests / dev** | `pytest`, `ruff`, `mkdocs` (optional local doc site). |
+
+---
+
+## Requirements
+
+- Python **3.12+**
+- Django **5.0+**
+
+---
 
 ## Install
 
@@ -17,15 +44,13 @@ pip install django-click-uz
 ```python
 INSTALLED_APPS = [
     # ...
-    "click_uz",  # required: migrations & models live here (not "click_up")
+    "click_uz",
 ]
 ```
 
-`click_up` is only an **import alias** (familiar API); do **not** add it to `INSTALLED_APPS`.
-
 ---
 
-## Settings
+## Configuration (summary)
 
 **Option A — `CLICK` dict (recommended):**
 
@@ -44,92 +69,59 @@ CLICK = {
 }
 ```
 
-**Option B — flat `CLICK_*` names (legacy click-pkg style):**
+**Option B — flat `CLICK_*`** (legacy click-pkg style): see [Configuration](https://github.com/Matnazar-Matnazarov/django-click-uz/blob/main/docs/configuration.md) in `docs/`.
 
-```python
-CLICK_SERVICE_ID = 12345
-CLICK_MERCHANT_ID = 1
-CLICK_SECRET_KEY = "secret"
-CLICK_ACCOUNT_MODEL = "order.models.Order"
-CLICK_AMOUNT_FIELD = "amount"
-CLICK_STATUS_FIELD = "status"
-```
-
-If both exist, the **`CLICK`** dict wins. Webhooks need **`HANDLER_CLASS`** **or** **`ACCOUNT_MODEL` + `AMOUNT_FIELD` + `STATUS_FIELD`**.
+Webhooks need **`HANDLER_CLASS`** **or** **`ACCOUNT_MODEL` + `AMOUNT_FIELD` + `STATUS_FIELD`**. If both dict and flat keys exist, **`CLICK` wins**.
 
 ---
 
-## Full integration (files in your project)
+## Integration checklist
 
-This mirrors common **click-pkg / video** tutorials but uses this package’s real rules.
+1. **`settings.py`** — `click_uz` in `INSTALLED_APPS`; set `CLICK` or `CLICK_*`.
+2. **`models.py`** — order model with `amount`, `status`, optional `transaction_param`.
+3. **`urls.py`** — e.g. `path("payment/click/", include("click_uz.urls"))` → webhook at `…/payment/click/webhook/`, or mount your own `ClickWebhook` subclass.
+4. **`views.py`** — override `successfully_payment`, `cancelled_payment`, optional `prepare_accepted`.
+5. **Pay link** — `ClickUp().initializer.generate_pay_link(...)`; see [README_UZ.md](README_UZ.md) for stable vs unique `transaction_param`.
+6. **Migrate** — `python manage.py migrate`.
 
-1. **`settings.py`** — `INSTALLED_APPS` includes **`click_uz`**; configure `CLICK` or flat keys as above.
-2. **`models.py`** — e.g. an `Order` with `amount`, `status` (`pending` → `waiting_payment` after prepare → `paid` / `cancelled`), and optional `transaction_param` if you use **`MERCHANT_TRANS_FIELD`**.
-3. **`urls.py`** — either include packaged routes:
-
-   ```python
-   path("payment/click/", include("click_uz.urls")),
-   ```
-
-   Webhook URL for the Click cabinet: `…/payment/click/webhook/`, **or** mount your own subclass on any path (e.g. `payment/click/update/`).
-
-4. **`views.py`** — subclass `ClickWebhook` and override `successfully_payment`, `cancelled_payment`, optional `prepare_accepted`. `params` is a dict with snapshot fields plus `payload` (Click fields).
-
-5. **Pay link** — `ClickUp().initializer.generate_pay_link(...)`.  
-   - Video-style stable id: `unique_transaction_id=False` (uses order pk as `transaction_param`).  
-   - Recommended: save a unique string to the order, then pass **`transaction_param=that_string`** (and set **`MERCHANT_TRANS_FIELD`**).  
-   - Default: random suffix per call (`unique_transaction_id=True`); persist the value yourself if you use DB lookup by `merchant_trans_id`.
-
-```python
-from click_up import ClickUp, unique_transaction_param
-
-tid = unique_transaction_param(order.pk)
-order.transaction_param = tid
-order.save(update_fields=["transaction_param"])
-url = ClickUp().initializer.generate_pay_link(
-    id=order.pk,
-    amount=order.amount,
-    return_url="https://example.com/done/",
-    transaction_param=tid,
-)
-```
-
-6. **Migrate:** `python manage.py migrate`
-
-**vs older `click-pkg` videos:** package name is **`django-click-uz`**; **`click_up` is not a Django app**. There is no `is_test_mode` flag here—use Click’s test merchant/service or `PAY_URL` from docs if applicable.
+Compared to older **click-pkg** tutorials: PyPI name is **`django-click-uz`**; only **`click_uz`** goes in `INSTALLED_APPS`.
 
 ---
 
-## URLs (included routes)
+## Documentation (local)
 
-```python
-from django.urls import path
-from click_up.views import ClickWebhook
+There is **no** hosted ReadTheDocs site for this repo. To browse the MkDocs site **locally**:
 
-class ClickWebhookAPIView(ClickWebhook):
-    def successfully_payment(self, params):
-        ...
-
-urlpatterns = [
-    path("payment/click/update/", ClickWebhookAPIView.as_view()),
-]
+```bash
+uv sync --all-extras   # or: pip install -e ".[dev]"
+mkdocs serve
 ```
 
-Or use `click_uz.urls`: `prepare/`, `complete/`, `callback/`, `webhook/`.
+Then open the URL shown in the terminal (usually `http://127.0.0.1:8000`). Sources live under [`docs/`](https://github.com/Matnazar-Matnazarov/django-click-uz/tree/main/docs).
 
 ---
 
-## Security & ops
+## Security & operations
 
-- Responses to Click stay **English**; admin/config strings can use **`click_uz` locale** (`locale/uz/`).
-- **Signature** verification on webhook bodies is the main authenticity check.
-- **HTTPS + optional IP allowlist:** see `click_uz.webhook_guard` and `CLICK["WEBHOOK_*"]` keys; behind TLS-terminating proxy set **`SECURE_PROXY_SSL_HEADER`**.
+- Click JSON responses use **English**; admin/config strings can use **`click_uz`** translations (`locale/uz/`).
+- **Signature** checks on webhook payloads are the main authenticity control.
+- **HTTPS + optional IP allowlist:** `click_uz.webhook_guard` and `CLICK["WEBHOOK_*"]`; behind TLS termination set **`SECURE_PROXY_SSL_HEADER`**.
 
-## Tests
+---
+
+## Development
 
 ```bash
 pip install -e ".[dev]"
 pytest
 ```
 
-Docs: [https://docs.click.uz/en/](https://docs.click.uz/en/)
+Release workflow: bump `version` in `pyproject.toml`, update `CHANGELOG.md`, commit, then tag **`vX.Y.Z`** (e.g. `v0.1.1`) and `git push origin vX.Y.Z` — see [`.github/workflows/publish.yml`](https://github.com/Matnazar-Matnazarov/django-click-uz/blob/main/.github/workflows/publish.yml). If a tag already exists, use the **next** version number.
+
+---
+
+## License
+
+MIT — see [`LICENSE`](https://github.com/Matnazar-Matnazarov/django-click-uz/blob/main/LICENSE).
+
+Official Click API reference: [docs.click.uz](https://docs.click.uz/en/).

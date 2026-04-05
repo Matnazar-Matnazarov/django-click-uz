@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-04-06
+
+### Changed
+
+- README: professional layout, Django / Click badges, “what’s in the package” table, local MkDocs instructions.
+- Documentation URLs: point to GitHub `docs/` tree; removed ReadTheDocs config and references (no hosted RTD project).
+
 ## [0.1.0] — 2026-04-05
 
 ### Added
@@ -18,5 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Webhook guard: HTTPS (production), optional IP allowlist (`WEBHOOK_ALLOWED_CIDRS`).
 - PyPI metadata, MkDocs site skeleton, GitHub Actions (CI + tag publish).
 
-[Unreleased]: https://github.com/Matnazar-Matnazarov/django-click-uz/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/Matnazar-Matnazarov/django-click-uz/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/Matnazar-Matnazarov/django-click-uz/releases/tag/v0.1.1
 [0.1.0]: https://github.com/Matnazar-Matnazarov/django-click-uz/releases/tag/v0.1.0

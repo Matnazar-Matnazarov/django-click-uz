@@ -43,13 +43,15 @@ uv run twine check dist/*
 On push of a tag `v*`, the **Publish** workflow uploads wheels to PyPI.
 
 1. Configure **Trusted publishing** on [pypi.org](https://pypi.org/) for project `django-click-uz` → your GitHub repo, or add a repository secret **`PYPI_API_TOKEN`** and adjust the workflow to use token auth if needed.
-2. Create a GitHub **environment** named `pypi` if your OIDC setup requires it.
-3. Tag and push:
+2. Create a GitHub **environment** named `pypi` only if your OIDC setup requires it (the default workflow does not).
+3. Tag and push (use a **new** version each time; PyPI rejects duplicate file versions):
 
 ```bash
-git tag -s v0.1.0 -m "Release 0.1.0"
-git push origin v0.1.0
+git tag -a v0.1.1 -m "Release 0.1.1"
+git push origin v0.1.1
 ```
+
+If the tag already exists locally, delete and recreate: `git tag -d v0.1.1` then tag again, or bump the version and use a new tag.
 
 ### Manual upload
 
