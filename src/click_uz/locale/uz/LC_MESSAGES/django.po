@@ -1,0 +1,68 @@
+# Uzbek (django-click-uz)
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Click.uz"
+msgstr "Click.uz"
+
+msgid "A dict named CLICK is required in Django settings."
+msgstr "Django sozlamalarida CLICK nomli dict bo‘lishi kerak."
+
+msgid "CLICK must define %(key)s."
+msgstr "CLICK ichida %(key)s ko‘rsatilishi shart."
+
+msgid "Incoming service_id does not match CLICK[\"SERVICE_ID\"]."
+msgstr "Kelgan service_id CLICK[\"SERVICE_ID\"] bilan mos kelmaydi."
+
+msgid "When using ACCOUNT_MODEL, set STATUS_FIELD (CharField) for payment state."
+msgstr "ACCOUNT_MODEL ishlatilganda to‘lov holati uchun STATUS_FIELD (CharField) kiriting."
+
+msgid "Set HANDLER_CLASS or ACCOUNT_MODEL + AMOUNT_FIELD + STATUS_FIELD for webhooks."
+msgstr "Webhook uchun HANDLER_CLASS yoki ACCOUNT_MODEL + AMOUNT_FIELD + STATUS_FIELD ni sozlang."
+
+msgid "ACCOUNT_MODEL must be like 'orders.Order'."
+msgstr "ACCOUNT_MODEL 'orders.Order' ko‘rinishida bo‘lishi kerak."
+
+msgid "Click webhook log"
+msgstr "Click webhook jurnali"
+
+msgid "Click webhook logs"
+msgstr "Click webhook jurnallari"
+
+msgid "created at"
+msgstr "yaratilgan vaqt"
+
+msgid "Click transaction id"
+msgstr "Click tranzaksiya id"
+
+msgid "action"
+msgstr "harakat"
+
+msgid "merchant transaction id"
+msgstr "savdogar tranzaksiya id"
+
+msgid "service id"
+msgstr "xizmat id"
+
+msgid "error code"
+msgstr "xato kodi"
+
+msgid "request digest"
+msgstr "so‘rov digesti"
+
+msgid "HANDLER_CLASS must be a BaseClickShopHandler subclass or instance."
+msgstr "HANDLER_CLASS BaseClickShopHandler subclass yoki instance bo‘lishi kerak."
+
+msgid ""
+"Set CLICK = {SERVICE_ID, MERCHANT_ID, SECRET_KEY, ...} or define "
+"CLICK_SERVICE_ID, CLICK_MERCHANT_ID, CLICK_SECRET_KEY on settings."
+msgstr ""
+"CLICK = {SERVICE_ID, MERCHANT_ID, SECRET_KEY, ...} yozing yoki settingsda "
+"CLICK_SERVICE_ID, CLICK_MERCHANT_ID, CLICK_SECRET_KEY belgilang."
+
+msgid "CLICK_SERVICE_ID / CLICK_MERCHANT_ID / CLICK_SECRET_KEY are required."
+msgstr "CLICK_SERVICE_ID, CLICK_MERCHANT_ID va CLICK_SECRET_KEY majburiy."
+
+msgid "Incoming service_id does not match configured SERVICE_ID."
+msgstr "Kelgan service_id sozlangan SERVICE_ID bilan mos emas."

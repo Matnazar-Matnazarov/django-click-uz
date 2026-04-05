@@ -22,6 +22,7 @@ var/
 wheels/
 share/python-wheels/
 *.egg-info/
+src/*.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
@@ -51,8 +52,9 @@ coverage.xml
 .pytest_cache/
 cover/
 
-# Translations
+# Translations (ship packaged gettext binaries)
 *.mo
+!src/**/locale/**/*.mo
 *.pot
 
 # Django stuff:
@@ -151,8 +153,11 @@ venv.bak/
 # Rope project settings
 .ropeproject
 
-# mkdocs documentation
+# MkDocs
 /site
+
+# Build / release (dist/ already above; explicit wheel at repo root)
+/*.whl
 
 # mypy
 .mypy_cache/
@@ -205,3 +210,5 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+plan.md
