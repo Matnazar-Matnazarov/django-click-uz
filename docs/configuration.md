@@ -50,4 +50,4 @@ url = ClickUp().initializer.generate_pay_link(
 )
 ```
 
-Full integration steps: [README_UZ.md](https://github.com/Matnazar-Matnazarov/click-uz-sdk/blob/main/README_UZ.md) (Uzbek) or [README.md](https://github.com/Matnazar-Matnazarov/click-uz-sdk/blob/main/README.md) (English).
+Full integration steps: [README_UZ.md](https://github.com/Matnazar-Matnazarov/django-click-uz/blob/main/README_UZ.md) (Uzbek) or [README.md](https://github.com/Matnazar-Matnazarov/django-click-uz/blob/main/README.md) (English).

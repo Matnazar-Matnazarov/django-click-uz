@@ -13,9 +13,9 @@ Production-oriented **Django 5+** integration for the [Click.uz](https://docs.cl
 
 - [Installation](installation.md)
 - [Configuration](configuration.md)
-- [English README on GitHub](https://github.com/Matnazar-Matnazarov/click-uz-sdk/blob/main/README.md)
-- [O‘zbekcha qo‘llanma (README_UZ)](https://github.com/Matnazar-Matnazarov/click-uz-sdk/blob/main/README_UZ.md)
-- [Changelog](https://github.com/Matnazar-Matnazarov/click-uz-sdk/blob/main/CHANGELOG.md)
+- [English README on GitHub](https://github.com/Matnazar-Matnazarov/django-click-uz/blob/main/README.md)
+- [O‘zbekcha qo‘llanma (README_UZ)](https://github.com/Matnazar-Matnazarov/django-click-uz/blob/main/README_UZ.md)
+- [Changelog](https://github.com/Matnazar-Matnazarov/django-click-uz/blob/main/CHANGELOG.md)
 - [Click official docs](https://docs.click.uz/en/)
 
 ## License

@@ -3,8 +3,8 @@
 ## Development
 
 ```bash
-git clone https://github.com/Matnazar-Matnazarov/click-uz-sdk.git
-cd click-uz-sdk
+git clone https://github.com/Matnazar-Matnazarov/django-click-uz.git
+cd django-click-uz
 uv sync --all-extras
 uv run ruff check .
 uv run ruff format --check .

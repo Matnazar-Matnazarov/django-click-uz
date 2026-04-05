@@ -1,6 +1,6 @@
 # django-click-uz
 
-[![CI](https://github.com/Matnazar-Matnazarov/click-uz-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/Matnazar-Matnazarov/click-uz-sdk/actions/workflows/ci.yml)
+[![CI](https://github.com/Matnazar-Matnazarov/django-click-uz/actions/workflows/ci.yml/badge.svg)](https://github.com/Matnazar-Matnazarov/django-click-uz/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/django-click-uz.svg)](https://pypi.org/project/django-click-uz/)
 [![Python versions](https://img.shields.io/pypi/pyversions/django-click-uz.svg)](https://pypi.org/project/django-click-uz/)
 [![Documentation](https://readthedocs.org/projects/django-click-uz/badge/?version=latest)](https://django-click-uz.readthedocs.io/en/latest/)

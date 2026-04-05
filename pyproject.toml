@@ -41,9 +41,9 @@ dev = [
 
 [project.urls]
 Documentation = "https://django-click-uz.readthedocs.io/"
-Changelog = "https://github.com/Matnazar-Matnazarov/click-uz-sdk/blob/main/CHANGELOG.md"
-Homepage = "https://github.com/Matnazar-Matnazarov/click-uz-sdk"
-Issues = "https://github.com/Matnazar-Matnazarov/click-uz-sdk/issues"
+Changelog = "https://github.com/Matnazar-Matnazarov/django-click-uz/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/Matnazar-Matnazarov/django-click-uz"
+Issues = "https://github.com/Matnazar-Matnazarov/django-click-uz/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
