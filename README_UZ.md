@@ -1,36 +1,67 @@
-# django-click-uz — Django + Click.uz to‘liq integratsiya
+# django-click-uz — Django + Click.uz integratsiyasi
 
-Bu qo‘llanma **Django loyihangizdagi** kerakli fayllarni (`settings.py`, `models.py`, `views.py`, `urls.py`) bosqichma-bosqich bog‘lash uchun yozilgan.  
-**Eslatma:** [GitHub click-pkg](https://github.com/PayTechUz/click-pkg) yoki videodagi `pip install click-pkg` — boshqa loyiha; bu yerda paket nomi **`django-click-uz`**, API esa tanish `click_up` importlari bilan mos keladi.
+[![CI](https://github.com/Matnazar-Matnazarov/django-click-uz/actions/workflows/ci.yml/badge.svg)](https://github.com/Matnazar-Matnazarov/django-click-uz/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/django-click-uz.svg)](https://pypi.org/project/django-click-uz/)
+[![Python](https://img.shields.io/pypi/pyversions/django-click-uz.svg)](https://pypi.org/project/django-click-uz/)
+[![Django](https://img.shields.io/badge/Django-5%2B-092e20?logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![Click.uz](https://img.shields.io/badge/To‘lov-Click.uz-00a651)](https://docs.click.uz/en/)
+
+**Django 5+** uchun [Click.uz](https://docs.click.uz/en/) Shop API: to‘lov havolasi, prepare/complete webhooklar, MD5 imzo, ixtiyoriy audit, takrorlashdan himoya, production uchun HTTPS va ixtiyoriy IP filtri.
+
+[Eski click-pkg / video](https://github.com/PayTechUz/click-pkg) bilan aralashtirmang: PyPI nomi **`django-click-uz`**, `click_up` esa faqat **import** uchun qulay modul.
+
+| | |
+|--|--|
+| **English README** | [README.md](README.md) |
+| **O‘zgarishlar jurnali** | [CHANGELOG.md](CHANGELOG.md) |
+| **Manba kod** | [github.com/Matnazar-Matnazarov/django-click-uz](https://github.com/Matnazar-Matnazarov/django-click-uz) |
+| **Qo‘shimcha `docs/`** | [repodagi `docs/`](https://github.com/Matnazar-Matnazarov/django-click-uz/tree/main/docs) |
 
 ---
 
-## 1. O‘rnatish (terminal)
+## Paket tarkibi
+
+| Qism | Vazifasi |
+|------|----------|
+| **`click_uz`** | Django ilovasi: `INSTALLED_APPS`, migratsiya, `urls`. Yo‘llar: `prepare/`, `complete/`, `callback/`, `webhook/`. `webhook_guard`, `ModelOrderHandler`, signalalar, `locale/uz`. |
+| **`click_up`** | Faqat import: `ClickUp`, `ClickWebhook`, `unique_transaction_param`. **`INSTALLED_APPS`ga qo‘shmang.** |
+| **Sozlama** | `CLICK` dict yoki tekis `CLICK_*`; ixtiyoriy `WEBHOOK_ALLOWED_CIDRS`, `WEBHOOK_REQUIRE_HTTPS`, `WEBHOOK_STRICT_IN_DEBUG`. |
+
+---
+
+## Talablar
+
+- Python **3.12+**
+- Django **5.0+**
+
+---
+
+## O‘rnatish
 
 ```bash
 pip install django-click-uz
 ```
 
----
-
-## 2. `settings.py` — `INSTALLED_APPS` (muhim)
-
-Videoda ba’zan faqat `'click_up'` yozilgan bo‘lishi mumkin. **Django migratsiyalari va admin `click_uz` ilovasida** — shuni qo‘shing. `click_up` — bu faqat **import qulayligi** (paket ichidagi modul), `INSTALLED_APPS` ro‘yxatiga emas.
-
 ```python
+# settings.py
 INSTALLED_APPS = [
     # ...
     "django.contrib.contenttypes",
     "django.contrib.auth",
-    # ...
-    "click_uz",  # majburiy: migratsiya, jadvallar, tarjimalar
-    "order",     # o‘zingizning buyurtma ilovangiz
+    "click_uz",  # majburiy
+    "orders",    # buyurtma modeli turgan ilova
 ]
 ```
 
-**Click konfiguratsiyasi** — ikkala usuldan biri (ikkala bo‘lsa, ustuvor **`CLICK` dict**):
+**Muhim:** videoda ba’zan `click_up` yoziladi — u **ilova emas**. Migratsiya va jadvallar faqat **`click_uz`** da.
 
-**Variant A — bitta `CLICK` dict (tavsiya etiladi):**
+---
+
+## Sozlash (`CLICK`)
+
+**Yagona qoida:** `CLICK` dict **va** tekis `CLICK_*` birga bo‘lsa, **ustuvor `CLICK`**.
+
+### Variant A — `CLICK` dict (tavsiya)
 
 ```python
 import os
@@ -39,34 +70,31 @@ CLICK = {
     "SERVICE_ID": int(os.environ["CLICK_SERVICE_ID"]),
     "MERCHANT_ID": int(os.environ["CLICK_MERCHANT_ID"]),
     "SECRET_KEY": os.environ["CLICK_SECRET_KEY"],
-    # "USER_ID": 12345,  # ixtiyoriy; bo‘lmasa MERCHANT_ID Click API uchun ishlatiladi
-    # Model orqali webhook (videodagi ORDER_MODEL o‘rniga):
-    "ACCOUNT_MODEL": "order.Order",   # "order.models.Order" ham ishlaydi
+    # "USER_ID": 12345,  # ixtiyoriy; bo‘lmasa MERCHANT_ID ishlatiladi
+    "ACCOUNT_MODEL": "orders.Order",
     "AMOUNT_FIELD": "amount",
     "STATUS_FIELD": "status",
-    # Status qiymatlari (modelingizdagi CharField qiymatlari bilan mos):
     "STATUS_PENDING": "pending",
-    "STATUS_WAITING": "waiting_payment",  # prepare qabul qilingach
+    "STATUS_WAITING": "waiting_payment",
     "STATUS_PAID": "paid",
     "STATUS_CANCELLED": "cancelled",
-    # Noyob transaction_param saqlasangiz (tavsiya):
     "MERCHANT_TRANS_FIELD": "transaction_param",
     "COMMISSION_PERCENT": 0,
     "DISABLE_ADMIN": False,
-    "ENABLE_AUDIT": True,   # `ClickWebhookLog` jadvali; o‘chirish: False
-    # Ishonchlilik (productionda proxy bilan `SECURE_PROXY_SSL_HEADER` ham):
+    "ENABLE_AUDIT": True,
+    # Production (ixtiyoriy):
     # "WEBHOOK_ALLOWED_CIDRS": ["203.0.113.0/24"],
+    # "WEBHOOK_STRICT_IN_DEBUG": True,
 }
 ```
 
-**Variant B — videodagi kabi alohida o‘zgaruvchilar:**
+### Variant B — tekis o‘zgaruvchilar (video uslubi)
 
 ```python
 CLICK_SERVICE_ID = 12345
 CLICK_MERCHANT_ID = 67890
-CLICK_SECRET_KEY = "..."
-CLICK_USER_ID = 1  # ixtiyoriy
-CLICK_ACCOUNT_MODEL = "order.models.Order"
+CLICK_SECRET_KEY = "maxfiy-kalit"
+CLICK_ACCOUNT_MODEL = "orders.Order"
 CLICK_AMOUNT_FIELD = "amount"
 CLICK_STATUS_FIELD = "status"
 CLICK_MERCHANT_TRANS_FIELD = "transaction_param"
@@ -74,15 +102,16 @@ CLICK_COMMISSION_PERCENT = 0
 CLICK_DISABLE_ADMIN = False
 ```
 
-Webhook ishlashi uchun **`HANDLER_CLASS`** yoki **`ACCOUNT_MODEL` + `AMOUNT_FIELD` + `STATUS_FIELD`** bo‘lishi kerak.
+Webhook uchun **`HANDLER_CLASS`** **yoki** **`ACCOUNT_MODEL` + `AMOUNT_FIELD` + `STATUS_FIELD`** kerak.
 
 ---
 
-## 3. `models.py` — buyurtma (Order) namunasi
+## Namuna: `Order` modeli
 
-Paket `prepare` bosqichida statusni **`STATUS_WAITING`** (standart: `waiting_payment`) ga o‘zgartiradi, to‘lov tugagach **`paid`**, bekor **`cancelled`**. Shuning uchun modelda bu qiymatlar bo‘lishi yoki `CLICK` ichida `STATUS_*` ni o‘zingiznikiga moslang.
+`prepare` dan keyin paket statusni odatda **`waiting_payment`** qiladi; to‘lov tugasa **`paid`**, rad etilsa **`cancelled`**. `CLICK` dagi `STATUS_*` qiymatlari model `choices` bilan mos kelishi kerak.
 
 ```python
+# orders/models.py
 from django.conf import settings
 from django.db import models
 
@@ -98,112 +127,103 @@ class Order(models.Model):
     status = models.CharField(
         max_length=32,
         choices=[
-            ("pending", "Pending"),
-            ("waiting_payment", "Waiting payment"),
-            ("paid", "Paid"),
-            ("cancelled", "Cancelled"),
+            ("pending", "Kutilmoqda"),
+            ("waiting_payment", "To‘lov kutilmoqda"),
+            ("paid", "To‘langan"),
+            ("cancelled", "Bekor qilingan"),
         ],
         default="pending",
     )
-    # Click `merchant_trans_id` bilan qidirish uchun (noyob param saqlanganda):
     transaction_param = models.CharField(max_length=255, blank=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return f"Order {self.pk} — {self.amount} UZS"
+        return f"Buyurtma {self.pk} — {self.amount} UZS"
 ```
-
-Keyin:
 
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-Bu `click_uz` jadvallarini ham yaratadi (`ENABLE_AUDIT=True` bo‘lsa audit jadvali ham).
+`ENABLE_AUDIT=True` bo‘lsa, `click_uz` audit jadvali ham yaratiladi.
 
 ---
 
-## 4. `urls.py` — webhook yo‘li
+## `urls.py`
 
-**A) Paket tayyor URLlari** (tavsiya — bitta URL Click uchun):
+### A) Paket URLlarini ulash (tavsiya)
 
 ```python
 from django.urls import include, path
 
 urlpatterns = [
-    # ...
     path("payment/click/", include("click_uz.urls")),
 ]
 ```
 
-Endi webhook masalan: `https://sizning-domen.uz/payment/click/webhook/`  
-(`prepare/`, `complete/`, `callback/` ham shu prefiks ostida.)
+Webhook misol: `https://sizning-domen.uz/payment/click/webhook/`
 
-**B) Videodagi kabi o‘z view klassingiz** — shu yo‘lga ulang:
+### B) O‘z view klassingiz (video kabi)
 
 ```python
 from django.urls import path
 
-from order.views import ClickWebhookAPIView  # misol
+from orders.views import ClickWebhookAPIView
 
 urlpatterns = [
     path("payment/click/update/", ClickWebhookAPIView.as_view(), name="click-webhook"),
 ]
 ```
 
-Click kabinetida aynan shu **to‘liq HTTPS URL**ni ro‘yxatdan o‘tkazing.
+Click kabinetiga **to‘liq HTTPS** manzilni yozing.
 
 ---
 
-## 5. `views.py` — webhook va to‘lov havolasi
+## `views.py`: webhook + to‘lov havolasi
 
-### 5.1 Webhook (videodagi `ClickWebhook`)
+### Webhook
 
-`params` — bu lug‘at: buyurtma `id`, `merchant_trans_id`, `amount`, `state` va `payload` (Clickdan kelgan qisqa maydonlar).
+`params` ichida buyurtma maydonlari (`id`, `merchant_trans_id`, `amount`, `state`, …) va Clickdan kelgan qisqa ma’lumot `payload` ichida.
 
 ```python
+# orders/views.py
 from click_up.views import ClickWebhook
 
-from order.models import Order
+from .models import Order
 
 
 class ClickWebhookAPIView(ClickWebhook):
     def successfully_payment(self, params):
-        # params["payload"]["merchant_trans_id"] — Click yuborgan param
-        merchant_trans_id = params["payload"].get("merchant_trans_id")
         order_id = params.get("id")
         try:
             order = Order.objects.get(pk=order_id)
-            # statusni paket allaqachon "paid" qiladi; bu yerda signal, email va hokazo:
-            ...
+            # Paket statusni allaqachon "paid" qiladi; bu yerda email, log va hokazo
         except Order.DoesNotExist:
             pass
 
     def cancelled_payment(self, params):
-        ...
+        pass
 
     def prepare_accepted(self, params):
-        """Prepare muvaffaqiyatli — ixtiyoriy"""
-        ...
+        """Ixtiyoriy: prepare muvaffaqiyatidan keyin."""
+        pass
 ```
 
-### 5.2 Buyurtma yaratish va pay havolasi
-
-**Oddiy usul (video bilan yaqin):** har safar buyurtma `id` Clickga `transaction_param` sifatida ketadi (`unique_transaction_id=False`). Qidiruv `id` bo‘yicha — `MERCHANT_TRANS_FIELD` shart emas.
+### Buyurtma yaratish + pay havolasi (oddiy — `id` = transaction_param)
 
 ```python
-from django.conf import settings
+import json
+
 from django.http import JsonResponse
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-import json
 
 from click_up import ClickUp
 
-from order.models import Order
+from .models import Order
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -211,8 +231,10 @@ class CreateOrderView(View):
     def post(self, request):
         body = json.loads(request.body or "{}")
         amount = body.get("amount")
-        order = Order.objects.create(user=request.user if request.user.is_authenticated else None, amount=amount)
-
+        order = Order.objects.create(
+            user=request.user if getattr(request, "user", None) and request.user.is_authenticated else None,
+            amount=amount,
+        )
         paylink = ClickUp().initializer.generate_pay_link(
             id=order.pk,
             amount=order.amount,
@@ -222,10 +244,12 @@ class CreateOrderView(View):
         return JsonResponse({"order_id": order.pk, "payment_link": paylink})
 ```
 
-**Tavsiya etilgan usul (noyob `transaction_param`):** takrorlanish va eski linklar bilan chalkashishni kamaytiradi. Avval paramni yaratib, modelga yozing, keyin **shu qator** bilan URL oching:
+### Tavsiya: har checkout uchun noyob `transaction_param`
 
 ```python
 from click_up import ClickUp, unique_transaction_param
+
+from .models import Order
 
 tid = unique_transaction_param(order.pk)
 order.transaction_param = tid
@@ -239,32 +263,59 @@ paylink = ClickUp().initializer.generate_pay_link(
 )
 ```
 
-Buning uchun `settings`da `MERCHANT_TRANS_FIELD = "transaction_param"` (yoki `CLICK` dictda `MERCHANT_TRANS_FIELD`) bo‘lishi kerak.
+Buning uchun `MERCHANT_TRANS_FIELD` / `CLICK_MERCHANT_TRANS_FIELD` = `"transaction_param"` bo‘lishi kerak.
 
-**REST Framework** ishlatsangiz, `APIView` ichidagi mantiq xuddi shu — faqat `request.data` dan o‘qing.
+**Django REST Framework:** xuddi shu mantiq `APIView` ichida, `request.data` orqali.
 
 ---
 
-## 6. Videodagi boshqa maslahatlar — bu paket bilan
+## Xavfsizlik
 
-| Video / eski qo‘llanma | `django-click-uz` |
-|------------------------|-------------------|
+- Clickga qaytadigan JSON matnlari **inglizcha**; admin/config uchun `click_uz` tarjimalari (`locale/uz`).
+- Asosiy himoya — **`sign_string`** bilan imzo tekshiruvi.
+- **`webhook_guard`:** productionda HTTPS; ixtiyoriy **`WEBHOOK_ALLOWED_CIDRS`**. TLS proxy orqali ishlayotgan bo‘lsangiz, **`SECURE_PROXY_SSL_HEADER`** ni sozlang.
+
+---
+
+## Hujjatlar (lokal)
+
+Internetda tayyor ReadTheDocs sayti yo‘q. MkDocs ni kompyuteringizda ko‘rish:
+
+```bash
+pip install -e ".[dev]"
+# yoki: uv sync --all-extras
+mkdocs serve
+```
+
+Terminaldagi manzilni oching (odatda `http://127.0.0.1:8000`).
+
+---
+
+## Rivojlantirish
+
+```bash
+pip install -e ".[dev]"
+pytest
+```
+
+**Reliz:** `pyproject.toml` dagi `version`, `CHANGELOG.md`, commit, keyin **`vX.Y.Z`** tag va `git push origin vX.Y.Z` — [publish.yml](https://github.com/Matnazar-Matnazarov/django-click-uz/blob/main/.github/workflows/publish.yml) PyPI ga yuklaydi. Har bir versiya PyPIda **bir marta** bo‘lishi kerak.
+
+---
+
+## Eski video / click-pkg bilan solishtirish
+
+| Eski qo‘llanma | `django-click-uz` |
+|----------------|-------------------|
 | `pip install click-pkg` | `pip install django-click-uz` |
 | `INSTALLED_APPS`: `click_up` | Faqat **`click_uz`** |
-| `is_test_mode=True` | Paketda alohida flag yo‘q; sinov uchun Click kabinetidagi test `SERVICE_ID` / hujjatdagi test URL (`CLICK["PAY_URL"]`) ishlating |
-| `return_url` | To‘g‘ri — `generate_pay_link(..., return_url=...)` |
-| Webhook orqali status | `ModelOrderHandler` statusni yangilaydi; qo‘shimcha logika — `successfully_payment` va hokazo |
+| `is_test_mode` | Alohida flag yo‘q; Click test `SERVICE_ID` / `PAY_URL` ishlating |
+| `return_url` | `generate_pay_link(..., return_url=...)` |
+| Webhook | `ModelOrderHandler` statusni yangilaydi; qo‘shimcha — `successfully_payment` va boshqalar |
 
 ---
 
-## 7. Xavfsizlik (qisqa)
+## Litsenziya
 
-- **Imzo:** so‘rovlar `sign_string` bilan tekshiriladi — noto‘g‘ri yoki begona POSTlar rad etiladi.
-- **HTTPS va IP:** `click_uz.webhook_guard` — productionda TLS, ixtiyoriy `WEBHOOK_ALLOWED_CIDRS`. Proxy orqali HTTPS bo‘lsa, Django’da `SECURE_PROXY_SSL_HEADER` ni sozlang.
+MIT — repodagi [`LICENSE`](https://github.com/Matnazar-Matnazarov/django-click-uz/blob/main/LICENSE).
 
----
-
-Inglizcha qisqa README: [README.md](README.md)  
-GitHub manbasi: [https://github.com/Matnazar-Matnazarov/django-click-uz](https://github.com/Matnazar-Matnazarov/django-click-uz)  
-Qo‘shimcha Markdown hujjatlar: repodagi [`docs/`](https://github.com/Matnazar-Matnazarov/django-click-uz/tree/main/docs) — brauzerda ochilgan sayt yo‘q; lokal ko‘rish: `uv sync --all-extras` keyin `mkdocs serve`.  
-Click hujjatlari: [https://docs.click.uz/en/](https://docs.click.uz/en/)
+Rasmiy Click hujjatlari: [docs.click.uz](https://docs.click.uz/en/).

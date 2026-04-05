@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- README.md and README_UZ.md aligned: same sections, badges, and expanded code samples (settings, model, urls, webhook, pay link, security).
+
 ## [0.1.1] — 2026-04-06
 
 ### Changed
